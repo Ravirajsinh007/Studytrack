@@ -1,0 +1,187 @@
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">📚</div>
+      <div class="brand-name">EduTrack</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Instructor</div>
+      <a class="nav-item" href="#!/instructor/dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item active" href="#!/instructor/grading">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Grade Submissions
+        <span class="nav-badge" ng-if="pendingGradesCount > 0">{{ pendingGradesCount }}</span>
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar">{{ username[0].toUpperCase() }}</div>
+        <div>
+          <div class="user-name">{{ username }}</div>
+          <div class="user-role">Instructor</div>
+        </div>
+      </div>
+      <a class="nav-item" href="#!/login" ng-click="logout()" style="margin-top: 4px;">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Grading Submissions</div>
+        <div class="topbar-sub">Review and grade student submissions</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="btn-icon" ng-click="logout()" title="Logout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- COURSE SELECTOR -->
+      <div class="filter-bar">
+        <div class="filter-label">Select Course:</div>
+        <div class="filter-buttons">
+          <button class="filter-btn" ng-repeat="course in courses" 
+                  ng-click="selectCourse(course)"
+                  ng-class="{'active': selectedCourse && selectedCourse.id === course.id}">
+            {{ course.title }}
+          </button>
+        </div>
+      </div>
+
+      <!-- SUBMISSIONS LIST -->
+      <div ng-if="!selectedCourse" style="padding: 40px 20px; text-align: center; color: #8896b3;">
+        <div style="font-size: 16px; margin-bottom: 8px;">Select a course to view submissions</div>
+      </div>
+
+      <div ng-if="selectedCourse">
+        <!-- TABS -->
+        <div class="tabs">
+          <button class="tab" ng-class="{'active': !filterStatus || filterStatus === 'ungraded'}" 
+                  ng-click="filterStatus = 'ungraded'">
+            Pending ({{ getUngraded().length }})
+          </button>
+          <button class="tab" ng-class="{'active': filterStatus === 'graded'}" 
+                  ng-click="filterStatus = 'graded'">
+            Graded ({{ getGraded().length }})
+          </button>
+          <button class="tab" ng-class="{'active': filterStatus === 'all'}" 
+                  ng-click="filterStatus = 'all'">
+            All ({{ submissions.length }})
+          </button>
+        </div>
+
+        <!-- NO SUBMISSIONS -->
+        <div ng-if="submissions.length === 0" class="empty-state">
+          <div class="empty-icon">📭</div>
+          <div class="empty-title">No submissions yet</div>
+          <div class="empty-text">Students haven't submitted their assignments for this course yet.</div>
+        </div>
+
+        <!-- SUBMISSIONS TABLE -->
+        <div class="submissions-table" ng-if="submissions.length > 0">
+          <div class="table-head">
+            <div class="table-col col-student">Student</div>
+            <div class="table-col col-assignment">Assignment</div>
+            <div class="table-col col-date">Submitted</div>
+            <div class="table-col col-status">Status</div>
+            <div class="table-col col-marks">Marks</div>
+            <div class="table-col col-action">Action</div>
+          </div>
+
+          <div class="table-body">
+            <div class="table-row" ng-repeat="sub in (filterStatus === 'ungraded' ? getUngraded() : filterStatus === 'graded' ? getGraded() : submissions)">
+              <div class="table-col col-student">
+                <div class="student-name">{{ sub.student_name }}</div>
+              </div>
+              <div class="table-col col-assignment">
+                <div class="assignment-name">{{ sub.assignment_title }}</div>
+              </div>
+              <div class="table-col col-date">
+                <div class="date-text">{{ sub.submitted_at | date:'shortDate' }}</div>
+              </div>
+              <div class="table-col col-status">
+                <span class="status-badge" ng-class="getStatusClass(sub.status)">{{ sub.status }}</span>
+              </div>
+              <div class="table-col col-marks">
+                <div ng-if="sub.marks_obtained">{{ sub.marks_obtained }}/{{ sub.marks_obtained ? '100' : '-' }}</div>
+                <div ng-if="!sub.marks_obtained" style="color: #8896b3;">—</div>
+              </div>
+              <div class="table-col col-action">
+                <button class="btn-sm" ng-click="openGradeModal(sub)">
+                  {{ sub.status === 'graded' ? 'Review' : 'Grade' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GRADING MODAL -->
+  <div class="modal" ng-show="showGradeModal" ng-click="closeGradeModal()" style="display: {{ showGradeModal ? 'flex' : 'none' }};">
+    <div class="modal-content modal-lg" ng-click="$event.stopPropagation()">
+      <div class="modal-head">
+        <div class="modal-title">Grade Submission</div>
+        <button class="modal-close" ng-click="closeGradeModal()">×</button>
+      </div>
+      <div class="modal-body" ng-if="editingSubmission">
+        <div class="submission-details">
+          <div class="detail-row">
+            <div class="detail-label">Student:</div>
+            <div class="detail-value">{{ editingSubmission.student_name }}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Assignment:</div>
+            <div class="detail-value">{{ editingSubmission.assignment_title }}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Submitted:</div>
+            <div class="detail-value">{{ editingSubmission.submitted_at | date:'medium' }}</div>
+          </div>
+          <div class="detail-row" ng-if="editingSubmission.file_url">
+            <div class="detail-label">Submission:</div>
+            <div class="detail-value">
+              <a href="{{ editingSubmission.file_url }}" target="_blank" class="link-btn">Download File</a>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+          <div class="form-group">
+            <label class="form-label">Marks Obtained (out of 100)</label>
+            <input type="number" class="form-input" ng-model="editingSubmission.marks_obtained" 
+                   min="0" max="100" placeholder="Enter marks">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Feedback</label>
+            <textarea class="form-input" ng-model="editingSubmission.feedback" 
+                      placeholder="Provide feedback to the student..." style="height: 100px; resize: none;"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-secondary" ng-click="closeGradeModal()">Cancel</button>
+        <button class="btn-primary" ng-click="submitGrade()">Submit Grade</button>
+      </div>
+    </div>
+  </div>
+
+</div>

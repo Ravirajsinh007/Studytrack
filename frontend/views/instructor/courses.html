@@ -1,0 +1,88 @@
+<div class="app-shell">
+  <div class="sidebar">
+    <div class="sidebar-brand"><div class="brand-icon">📚</div><div class="brand-name">EduTrack</div></div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Instructor</div>
+      <a class="nav-item" href="#!/instructor/dashboard"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Overview</a>
+      <a class="nav-item active" href="#!/instructor/courses"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manage Courses</a>
+      <a class="nav-item" href="#!/instructor/grading"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/></svg>Grade Submissions<span class="nav-badge red">5</span></a>
+      <a class="nav-item" href="#!/instructor/announcements"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>Announcements</a>
+      <a class="nav-item" href="#!/instructor/analytics"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics</a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-chip"><div class="user-avatar">{{username[0]}}</div><div><div class="user-name">{{username}}</div><div class="user-role">Instructor</div></div></div>
+      <a class="nav-item" ng-click="logout()"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a>
+    </div>
+  </div>
+  <div class="main-content">
+    <div class="topbar"><div><div class="topbar-title">Manage Courses</div><div class="topbar-sub">Create, edit and manage course content</div></div><div class="topbar-actions"><button class="btn-primary" ng-click="showCreateCourse=true">+ New Course</button></div></div>
+    <div class="page-body">
+      <!-- CREATE COURSE MODAL -->
+      <div class="modal-overlay" ng-if="showCreateCourse">
+        <div class="modal-box">
+          <div class="modal-head"><div class="modal-title">Create New Course</div><button class="modal-close" ng-click="showCreateCourse=false">✕</button></div>
+          <div class="success-msg" ng-if="courseSuccess">✅ Course created!</div>
+          <div class="form-group"><label>Course Title</label><input ng-model="newCourse.title" placeholder="e.g. Data Structures & Algorithms" /></div>
+          <div class="form-group"><label>Description</label><textarea ng-model="newCourse.description" placeholder="What will students learn?" style="min-height:90px"></textarea></div>
+          <div style="display:flex;gap:10px"><button class="btn-primary" ng-click="createCourse()" style="flex:1">Create Course →</button><button class="btn-secondary" ng-click="showCreateCourse=false">Cancel</button></div>
+        </div>
+      </div>
+      <!-- ADD MODULE MODAL -->
+      <div class="modal-overlay" ng-if="showAddModule">
+        <div class="modal-box">
+          <div class="modal-head"><div class="modal-title">Add Module to: {{selectedCourse.title}}</div><button class="modal-close" ng-click="showAddModule=false">✕</button></div>
+          <div class="form-group"><label>Module Title</label><input ng-model="newModule.title" placeholder="e.g. Binary Trees" /></div>
+          <div class="form-group"><label>Content / Description</label><textarea ng-model="newModule.content" placeholder="Topics covered in this module..."></textarea></div>
+          <div class="form-group"><label>Resource Link (optional)</label><input ng-model="newModule.link" placeholder="https://..." /></div>
+          <div style="display:flex;gap:10px"><button class="btn-primary" ng-click="addModule()" style="flex:1">Add Module →</button><button class="btn-secondary" ng-click="showAddModule=false">Cancel</button></div>
+        </div>
+      </div>
+      <!-- ADD ASSIGNMENT MODAL -->
+      <div class="modal-overlay" ng-if="showAddAssignment">
+        <div class="modal-box">
+          <div class="modal-head"><div class="modal-title">Add Assignment to: {{selectedCourse.title}}</div><button class="modal-close" ng-click="showAddAssignment=false">✕</button></div>
+          <div class="form-group"><label>Assignment Title</label><input ng-model="newAssignment.title" placeholder="e.g. Binary Tree Implementation" /></div>
+          <div class="form-group"><label>Instructions</label><textarea ng-model="newAssignment.description" placeholder="Describe the task..."></textarea></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group"><label>Due Date</label><input type="date" ng-model="newAssignment.due_date" /></div>
+            <div class="form-group"><label>Max Marks</label><input type="number" ng-model="newAssignment.max_marks" placeholder="100" /></div>
+          </div>
+          <div style="display:flex;gap:10px"><button class="btn-primary" ng-click="addAssignment()" style="flex:1">Create Assignment →</button><button class="btn-secondary" ng-click="showAddAssignment=false">Cancel</button></div>
+        </div>
+      </div>
+      <!-- COURSE LIST -->
+      <div class="panel" ng-repeat="c in courses" style="margin-bottom:20px">
+        <div class="panel-head">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="course-dot {{c.color}}">{{c.icon}}</div>
+            <div><div class="panel-title">{{c.title}}</div><div style="font-size:12px;color:var(--text3)">{{c.students}} students · {{c.modules.length}} modules · {{c.assignments.length}} assignments</div></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-secondary" style="padding:7px 12px;font-size:12px" ng-click="openAddModule(c)">+ Module</button>
+            <button class="btn-secondary" style="padding:7px 12px;font-size:12px" ng-click="openAddAssignment(c)">+ Assignment</button>
+            <button class="btn-danger" style="padding:7px 12px;font-size:12px" ng-click="deleteCourse(c)">Delete</button>
+          </div>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn" ng-class="{active:c.tab==='modules'}" ng-click="c.tab='modules'">Modules ({{c.modules.length}})</button>
+          <button class="tab-btn" ng-class="{active:c.tab==='assignments'}" ng-click="c.tab='assignments'">Assignments ({{c.assignments.length}})</button>
+        </div>
+        <div class="panel-body" ng-if="c.tab==='modules'">
+          <div class="module-card" ng-repeat="m in c.modules">
+            <div class="module-num">{{$index+1}}</div>
+            <div style="flex:1"><div class="module-title">{{m.title}}</div><div class="module-meta">{{m.content}}</div></div>
+            <button class="btn-danger" style="padding:5px 10px;font-size:11px;margin-left:auto" ng-click="deleteModule(c,m)">Remove</button>
+          </div>
+          <div class="empty-state" ng-if="c.modules.length===0"><div class="empty-icon">📦</div><div class="empty-title">No modules yet</div><div class="empty-sub">Add your first module</div></div>
+        </div>
+        <div class="panel-body" ng-if="c.tab==='assignments'">
+          <div ng-repeat="a in c.assignments" style="display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid var(--border)">
+            <div style="flex:1"><div style="font-size:13.5px;font-weight:500;margin-bottom:3px">{{a.title}}</div><div style="font-size:12px;color:var(--text3)">Due: {{a.due_date}} · Max: {{a.max_marks}} marks</div></div>
+            <button class="btn-danger" style="padding:5px 10px;font-size:11px" ng-click="deleteAssignment(c,a)">Remove</button>
+          </div>
+          <div class="empty-state" ng-if="c.assignments.length===0"><div class="empty-icon">📋</div><div class="empty-title">No assignments yet</div><div class="empty-sub">Add your first assignment</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

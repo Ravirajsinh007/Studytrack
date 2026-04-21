@@ -1,0 +1,160 @@
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">📚</div>
+      <div class="brand-name">EduTrack</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Main</div>
+      <a class="nav-item" href="#!/student/dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" href="#!/student/assignments">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Assignments
+        <span class="nav-badge" ng-if="assignments.length">{{ assignments.filter(a => !a.submitted).length }}</span>
+      </a>
+      <a class="nav-item active" href="#!/student/grades">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Grades
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Activity</div>
+      <a class="nav-item" href="#!/student/announcements">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Announcements
+        <span class="nav-badge" ng-if="announcements.length">{{ announcements.length }}</span>
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar">{{ username[0].toUpperCase() }}</div>
+        <div>
+          <div class="user-name">{{ username }}</div>
+          <div class="user-role">Student</div>
+        </div>
+      </div>
+      <a class="nav-item" href="#!/login" ng-click="logout()" style="margin-top: 4px;">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">My Grades</div>
+        <div class="topbar-sub">View your assignment grades and feedback</div>
+      </div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- GRADE SUMMARY -->
+      <div class="grade-summary-grid" ng-if="submissions.length">
+        <div class="summary-card">
+          <div class="summary-icon">📊</div>
+          <div class="summary-content">
+            <div class="summary-value">{{ getGradedCount() }}</div>
+            <div class="summary-label">Graded Assignments</div>
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon">🎯</div>
+          <div class="summary-content">
+            <div class="summary-value">{{ getAverageGrade() }}%</div>
+            <div class="summary-label">Average Grade</div>
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon">📈</div>
+          <div class="summary-content">
+            <div class="summary-value">{{ getGradeLetter() }}</div>
+            <div class="summary-label">Overall Grade</div>
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon">⏳</div>
+          <div class="summary-content">
+            <div class="summary-value">{{ getPendingCount() }}</div>
+            <div class="summary-label">Pending Review</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTER -->
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-head">
+          <div class="panel-title">Filter Submissions</div>
+        </div>
+        <div style="padding:20px;">
+          <select ng-model="statusFilter" class="filter-select">
+            <option value="">All Status</option>
+            <option value="submitted">Submitted</option>
+            <option value="under_review">Under Review</option>
+            <option value="graded">Graded</option>
+            <option value="resubmit">Resubmit Requested</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- GRADE CARDS -->
+      <div class="grades-grid" ng-if="submissions.length">
+        <div class="grade-card" ng-repeat="sub in submissions | filter:filterSubmissions" ng-class="getGradeCardClass(sub)">
+          <div class="grade-card-header">
+            <div class="grade-assignment-title">{{ sub.assignment_title }}</div>
+            <div class="grade-course-title">{{ sub.course_title }}</div>
+          </div>
+
+          <div class="grade-card-body">
+            <div class="grade-status-section">
+              <span class="grade-status-badge" ng-class="getStatusClass(sub.status)">
+                {{ getStatusText(sub.status) }}
+              </span>
+              <div class="grade-submitted-date">
+                Submitted: {{ sub.submitted_at | date:'mediumDate' }}
+              </div>
+            </div>
+
+            <div class="grade-marks-section" ng-if="sub.marks_obtained !== null">
+              <div class="grade-score">
+                <div class="grade-score-number">{{ sub.marks_obtained }}/{{ sub.max_marks }}</div>
+                <div class="grade-score-percentage">{{ getPercentage(sub) }}%</div>
+              </div>
+              <div class="grade-progress-bar">
+                <div class="grade-progress-fill" ng-style="getProgressStyle(sub)"></div>
+              </div>
+              <div class="grade-letter">{{ getGradeLetterForScore(sub.marks_obtained, sub.max_marks) }}</div>
+            </div>
+
+            <div class="grade-feedback-section" ng-if="sub.feedback">
+              <div class="grade-feedback-label">Instructor Feedback:</div>
+              <div class="grade-feedback-text">{{ sub.feedback }}</div>
+            </div>
+
+            <div class="grade-graded-date" ng-if="sub.graded_at">
+              Graded on: {{ sub.graded_at | date:'mediumDate' }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NO DATA -->
+      <div ng-if="!submissions.length" class="no-data-message">
+        <div class="no-data-icon">📝</div>
+        <div class="no-data-title">No Submissions Yet</div>
+        <div class="no-data-text">You haven't submitted any assignments yet. Check the Assignments page to get started!</div>
+      </div>
+
+    </div>
+  </div>
+</div>

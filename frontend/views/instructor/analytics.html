@@ -1,0 +1,61 @@
+<div class="app-shell">
+  <div class="sidebar">
+    <div class="sidebar-brand"><div class="brand-icon">📚</div><div class="brand-name">EduTrack</div></div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Instructor</div>
+      <a class="nav-item" href="#!/instructor/dashboard"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Overview</a>
+      <a class="nav-item" href="#!/instructor/courses"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manage Courses</a>
+      <a class="nav-item" href="#!/instructor/grading"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/></svg>Grade Submissions</a>
+      <a class="nav-item" href="#!/instructor/announcements"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>Announcements</a>
+      <a class="nav-item active" href="#!/instructor/analytics"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics</a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-chip"><div class="user-avatar">{{username[0]}}</div><div><div class="user-name">{{username}}</div><div class="user-role">Instructor</div></div></div>
+      <a class="nav-item" ng-click="logout()"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a>
+    </div>
+  </div>
+  <div class="main-content">
+    <div class="topbar"><div><div class="topbar-title">Analytics</div><div class="topbar-sub">Class performance and insights</div></div></div>
+    <div class="page-body">
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-label">Submission Rate</div><div class="metric-val blue">{{submissionRate}}%</div><div class="metric-change">↑ Students submitted</div></div>
+        <div class="metric-card"><div class="metric-label">Class Average</div><div class="metric-val green">{{classAvg}}%</div><div class="metric-change">↑ Across all graded</div></div>
+        <div class="metric-card"><div class="metric-label">Top Scorer</div><div class="metric-val teal">{{topScorer}}</div><div class="metric-change">Highest performer</div></div>
+        <div class="metric-card"><div class="metric-label">At Risk</div><div class="metric-val red">{{atRisk}}</div><div class="metric-change" style="color:var(--red)">Below 50%</div></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">Score Distribution by Assignment</div></div>
+          <div class="panel-body">
+            <div class="analytics-bar-wrap" ng-repeat="a in assignmentAvgs">
+              <div class="analytics-label" style="font-size:12px">{{a.title}}</div>
+              <div class="analytics-bar-bg"><div class="analytics-bar-fill" style="width:{{a.avg}}%"></div></div>
+              <div class="analytics-val">{{a.avg}}%</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">Student Leaderboard</div></div>
+          <div class="panel-body">
+            <div class="grade-row" ng-repeat="s in leaderboard">
+              <div style="font-size:14px;font-weight:700;color:var(--text3);min-width:20px">{{$index+1}}</div>
+              <div class="grade-avatar {{s.color}}">{{s.initials}}</div>
+              <div><div class="grade-student">{{s.name}}</div><div class="grade-assign">{{s.submissions}} submissions</div></div>
+              <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:var(--green)">{{s.avg}}%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">Per-Course Performance</div></div>
+        <div class="panel-body">
+          <div class="analytics-bar-wrap" ng-repeat="c in coursePerformance">
+            <div class="analytics-label"><div style="font-size:13px">{{c.title}}</div><div style="font-size:11px;color:var(--text3)">{{c.students}} students</div></div>
+            <div class="analytics-bar-bg" style="height:8px"><div class="analytics-bar-fill" style="width:{{c.avg}}%"></div></div>
+            <div class="analytics-val">{{c.avg}}%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,188 @@
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">📚</div>
+      <div class="brand-name">EduTrack</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Instructor</div>
+      <a class="nav-item active" href="#!/instructor/dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Overview
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Manage Courses
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Grade Submissions
+        <span class="nav-badge" ng-if="pendingGradesCount">{{ pendingGradesCount }}</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Analytics
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+        Announcements
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar">{{ username[0].toUpperCase() }}</div>
+        <div>
+          <div class="user-name">{{ username }}</div>
+          <div class="user-role">Instructor</div>
+        </div>
+      </div>
+      <a class="nav-item" href="#!/login" ng-click="logout()" style="margin-top: 4px;">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Instructor Dashboard</div>
+        <div class="topbar-sub">Welcome back, {{ username }} · Overview</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-icon" ng-click="openAnnouncementModal()" title="New Announcement">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </button>
+        <div class="btn-icon" ng-click="logout()" title="Logout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- METRICS -->
+      <div class="metrics-grid">
+        <div class="metric-card blue">
+          <div class="metric-label">Active Courses</div>
+          <div class="metric-val blue">{{ courses.length }}</div>
+        </div>
+        <div class="metric-card teal">
+          <div class="metric-label">Total Students</div>
+          <div class="metric-val teal">{{ totalStudents }}</div>
+        </div>
+        <div class="metric-card amber">
+          <div class="metric-label">Pending Grades</div>
+          <div class="metric-val amber">{{ pendingGradesCount || 0 }}</div>
+        </div>
+        <div class="metric-card purple">
+          <div class="metric-label">Announcements</div>
+          <div class="metric-val purple">{{ announcements.length }}</div>
+        </div>
+      </div>
+
+      <!-- COURSES -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Your Courses</div>
+        </div>
+        <div class="panel-body">
+          <div class="course-item" ng-repeat="course in courses" ng-click="selectCourse(course)" style="cursor: pointer; border-radius: 8px; margin-bottom: 8px;" ng-class="{'selected-course': selectedCourse && selectedCourse.id === course.id}">
+            <div class="course-dot {{ course.color }}">{{ course.icon }}</div>
+            <div style="flex: 1;">
+              <div class="course-name">{{ course.title }}</div>
+              <div class="course-meta">{{ course.module_count }} modules</div>
+            </div>
+            <div style="color: #8896b3; font-size: 12px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div ng-if="courses.length === 0" style="padding: 24px 22px; color: #8896b3; text-align: center;">
+            No courses yet
+          </div>
+        </div>
+      </div>
+
+      <!-- PENDING GRADES -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Pending Submissions</div>
+          <div class="panel-link" ng-click="$location.path('/instructor/grading')">Grade submissions →</div>
+        </div>
+        <div class="panel-body">
+          <div ng-if="!selectedCourse" style="padding: 24px 22px; color: #8896b3; text-align: center;">
+            Select a course to view submissions
+          </div>
+          <div ng-if="selectedCourse && getUngraded().length > 0">
+            <div class="submission-row" ng-repeat="sub in getUngraded() | limitTo: 3">
+              <div style="flex: 1;">
+                <div class="submission-student">{{ sub.student_name }}</div>
+                <div class="submission-meta">{{ sub.assignment_title }}</div>
+              </div>
+              <button class="btn-sm" ng-click="openGradeModal(sub)">Grade</button>
+            </div>
+          </div>
+          <div ng-if="selectedCourse && getUngraded().length === 0" style="padding: 16px 22px; color: #8896b3; font-size: 13px; text-align: center;">
+            All submissions graded!
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT ANNOUNCEMENTS -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Recent Announcements</div>
+          <div class="panel-link">View all →</div>
+        </div>
+        <div class="panel-body">
+          <div class="ann-item" ng-repeat="ann in announcements">
+            <div class="ann-course-tag blue">{{ ann.course_title }}</div>
+            <div class="ann-title">{{ ann.title }}</div>
+            <div class="ann-msg">{{ ann.message }}</div>
+            <div class="ann-time">{{ ann.created_at | date:'shortDate' }}</div>
+          </div>
+          <div ng-if="announcements.length === 0" style="padding: 24px 22px; color: #8896b3; text-align: center;">
+            No announcements yet
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ANNOUNCEMENT MODAL -->
+  <div class="modal" ng-show="showAnnouncementModal" ng-click="closeAnnouncementModal()" style="display: {{ showAnnouncementModal ? 'flex' : 'none' }};">
+    <div class="modal-content" ng-click="$event.stopPropagation()">
+      <div class="modal-head">
+        <div class="modal-title">Create Announcement</div>
+        <button class="modal-close" ng-click="closeAnnouncementModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Select Course</label>
+          <select class="form-input" ng-model="selectedCourse" ng-options="c as c.title for c in courses" style="width: 100%;">
+            <option value="">-- Select a course --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-input" ng-model="newAnnouncement.title" placeholder="Announcement title">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-input" ng-model="newAnnouncement.message" placeholder="Write your message..." style="height: 120px; resize: none;"></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-secondary" ng-click="closeAnnouncementModal()">Cancel</button>
+        <button class="btn-primary" ng-click="createAnnouncement()">Post Announcement</button>
+      </div>
+    </div>
+  </div>
+
+</div>

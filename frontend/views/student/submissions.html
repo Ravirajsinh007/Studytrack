@@ -1,0 +1,97 @@
+<div class="app-shell">
+  <div class="sidebar">
+    <div class="sidebar-brand"><div class="brand-icon">📚</div><div class="brand-name">EduTrack</div></div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Student</div>
+      <a class="nav-item" href="#!/student/dashboard"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+      <a class="nav-item" href="#!/student/courses"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>My Courses</a>
+      <a class="nav-item" href="#!/student/assignments"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Assignments</a>
+      <a class="nav-item" href="#!/student/grades"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Grades</a>
+      <a class="nav-item active" href="#!/student/submissions"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Submissions</a>
+      <a class="nav-item" href="#!/student/forum"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Forum</a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-chip"><div class="user-avatar">{{username[0]}}</div><div><div class="user-name">{{username}}</div><div class="user-role">Student</div></div></div>
+      <a class="nav-item" ng-click="logout()"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a>
+    </div>
+  </div>
+  <div class="main-content">
+    <div class="topbar">
+      <div><div class="topbar-title">Submission History</div><div class="topbar-sub">All your submitted work and feedback</div></div>
+      <div class="topbar-actions">
+        <select ng-model="statusFilter" style="background:var(--card);border:1px solid var(--border2);color:var(--text2);padding:8px 12px;border-radius:var(--radius-sm);font-family:'Sora',sans-serif;font-size:12px;outline:none">
+          <option value="">All Status</option>
+          <option value="graded">Graded</option>
+          <option value="submitted">Submitted</option>
+          <option value="under_review">Under Review</option>
+          <option value="resubmit">Resubmit</option>
+        </select>
+      </div>
+    </div>
+    <div class="page-body">
+      <!-- DETAIL MODAL -->
+      <div class="modal-overlay" ng-if="selectedSub" ng-click="closeModal()">
+        <div class="modal-box" ng-click="$event.stopPropagation()">
+          <div class="modal-head"><div class="modal-title">{{selectedSub.title}}</div><button class="modal-close" ng-click="closeModal()">✕</button></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+            <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:14px">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Status</div>
+              <span class="status-pill" ng-class="{graded:selectedSub.status==='Graded',submitted:selectedSub.status==='Submitted',review:selectedSub.status==='Under Review',resubmit:selectedSub.status==='Resubmit'}">{{selectedSub.status}}</span>
+            </div>
+            <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:14px">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Marks</div>
+              <div style="font-size:18px;font-weight:700;color:var(--green)" ng-if="selectedSub.marks">{{selectedSub.marks}}</div>
+              <div style="color:var(--text3);font-size:13px" ng-if="!selectedSub.marks">Awaiting grading</div>
+            </div>
+          </div>
+          <div ng-if="selectedSub.feedback" style="background:var(--bg3);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;border-left:3px solid var(--accent)">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;font-weight:600">📝 Instructor Feedback</div>
+            <div style="font-size:13.5px;color:var(--text2);line-height:1.8;font-style:italic">{{selectedSub.feedback}}</div>
+          </div>
+          <div ng-if="!selectedSub.feedback && selectedSub.status !== 'Submitted'" style="background:var(--bg3);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;color:var(--text3);font-size:13px">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px">Feedback</div>
+            <div>No feedback provided yet</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);border-top:1px solid var(--border);padding-top:12px">
+            <div>Submitted: {{selectedSub.date}}</div>
+            <div>Course: {{selectedSub.course}}</div>
+            <div ng-if="selectedSub.graded_at">Graded: {{selectedSub.graded_at | date:'short'}}</div>
+          </div>
+          <div ng-if="selectedSub.file_url" style="margin-top:16px">
+            <a class="btn-primary" style="display:inline-block;padding:10px 14px;" href="{{selectedSub.file_url}}" target="_blank" download>📥 Download Submission</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div class="panel" ng-if="loadingSubmissions">
+        <div class="panel-head"><div class="panel-title">Loading submissions...</div></div>
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div class="empty-state" ng-if="!loadingSubmissions && submissions.length === 0">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">No submissions yet</div>
+        <div class="empty-sub">Once you submit your assignments, they will appear here with feedback from your instructor.</div>
+      </div>
+
+      <!-- SUBMISSIONS TABLE -->
+      <div class="panel" ng-if="!loadingSubmissions && submissions.length > 0">
+        <table class="data-table">
+          <thead><tr><th>Assignment</th><th>Course</th><th>Submitted On</th><th>Status</th><th>Marks</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr ng-repeat="s in submissions | filter:{status_raw:statusFilter} | orderBy:'-submitted_at'" style="cursor:pointer;transition:all 0.2s">
+              <td style="font-weight:500">{{s.title}}</td>
+              <td style="color:var(--text2)">{{s.course}}</td>
+              <td style="color:var(--text3);font-family:'DM Mono',monospace;font-size:12px">{{s.date}}</td>
+              <td><span class="status-pill" ng-class="{graded:s.status==='Graded',submitted:s.status==='Submitted',review:s.status==='Under Review',resubmit:s.status==='Resubmit'}">{{s.status}}</span></td>
+              <td style="font-family:'DM Mono',monospace;color:var(--green);font-weight:600" ng-if="s.marks">{{s.marks}}</td>
+              <td style="color:var(--text3);font-size:12px" ng-if="!s.marks">—</td>
+              <td><button ng-click="viewSubmission(s)" style="background:rgba(79,124,255,.15);border:1px solid rgba(79,124,255,.3);color:var(--accent);padding:6px 12px;font-size:11px;border-radius:6px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600;transition:all 0.15s" onmouseover="this.style.background='rgba(79,124,255,.25)'" onmouseout="this.style.background='rgba(79,124,255,.15)'">View Details →</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

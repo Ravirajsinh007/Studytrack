@@ -1,0 +1,253 @@
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">📚</div>
+      <div class="brand-name">EduTrack</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Main</div>
+      <a class="nav-item active" href="#!/student/dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        My Courses
+      </a>
+      <a class="nav-item" href="#!/student/assignments">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Assignments
+        <span class="nav-badge" ng-if="assignments.length">{{ assignments.filter(a => !a.submitted).length }}</span>
+      </a>
+      <a class="nav-item" href="#!/student/grades">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Grades
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Deadlines
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Activity</div>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Forum
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Announcements
+        <span class="nav-badge">2</span>
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar">{{ username[0].toUpperCase() }}</div>
+        <div>
+          <div class="user-name">{{ username }}</div>
+          <div class="user-role">Student</div>
+        </div>
+      </div>
+      <a class="nav-item" href="#!/login" ng-click="logout()" style="margin-top: 4px;">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Student Dashboard</div>
+        <div class="topbar-sub">Good morning, {{ username }} 👋</div>
+      </div>
+      <div class="topbar-actions">
+        <!-- SEARCH -->
+        <div class="search-container" ng-show="showSearch">
+          <input type="text" id="search-input" ng-model="searchQuery" placeholder="Search courses..." class="search-input">
+        </div>
+        <div class="btn-icon" ng-click="toggleSearch()" title="Search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div class="btn-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- METRICS -->
+      <div class="metrics-grid">
+        <div class="metric-card blue">
+          <div class="metric-label">Enrolled Courses</div>
+          <div class="metric-val blue">{{ metrics.enrolledCourses }}</div>
+          <div class="metric-change">↑ Active this semester</div>
+        </div>
+        <div class="metric-card teal">
+          <div class="metric-label">Assignments Done</div>
+          <div class="metric-val teal">{{ metrics.assignmentsDone }}</div>
+          <div class="metric-change">↑ This semester</div>
+        </div>
+        <div class="metric-card amber">
+          <div class="metric-label">Pending Deadlines</div>
+          <div class="metric-val amber">{{ metrics.pendingDeadlines }}</div>
+          <div class="metric-change" style="color: #f5a623;">Check assignments</div>
+        </div>
+        <div class="metric-card green">
+          <div class="metric-label">Avg. Grade</div>
+          <div class="metric-val green">{{ metrics.avgGrade }}%</div>
+          <div class="metric-change">↑ Good standing</div>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="panel" style="margin-bottom: 20px;">
+        <div class="panel-head">
+          <div class="panel-title">Quick Actions</div>
+        </div>
+        <div class="quick-actions-grid">
+          <div class="quick-action-card" ng-repeat="action in quickActions" ng-click="performAction(action.action)">
+            <div class="quick-action-icon" ng-class="action.color">{{ action.icon }}</div>
+            <div class="quick-action-title">{{ action.title }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT GRID -->
+      <div class="dashboard-grid">
+        <!-- COURSES -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">My Courses</div>
+            <div class="panel-link" ng-click="$location.path('/student/assignments')">View all →</div>
+          </div>
+          <div class="panel-body">
+            <div class="course-item" ng-repeat="course in filteredCourses() | limitTo: 3">
+              <div class="course-dot {{ course.color }}">{{ course.icon }}</div>
+              <div>
+                <div class="course-name">{{ course.title }}</div>
+                <div class="course-meta">{{ course.instructor }} · {{ course.modules }} modules</div>
+              </div>
+              <div class="course-progress-wrap">
+                <div class="course-pct">{{ course.progress }}%</div>
+                <div class="progress-bar">
+                  <div class="progress-fill {{ course.color }}" style="width: {{ course.progress }}%"></div>
+                </div>
+              </div>
+            </div>
+            <div ng-if="filteredCourses().length === 0" style="padding: 24px 22px; color: #5a6b8a; font-size: 13px;">
+              No courses found
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Recent Activity</div>
+            <div class="panel-link">View all →</div>
+          </div>
+          <div class="panel-body">
+            <div class="activity-item" ng-repeat="activity in recentActivity">
+              <div class="activity-icon">{{ activity.icon }}</div>
+              <div class="activity-content">
+                <div class="activity-title">{{ activity.title }}</div>
+                <div class="activity-meta">{{ activity.course }} · {{ activity.time }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANNOUNCEMENTS -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Latest Announcements</div>
+            <div class="panel-link">View all →</div>
+          </div>
+          <div class="panel-body">
+            <div class="ann-item" ng-repeat="ann in announcements">
+              <div class="ann-course-tag blue">{{ ann.course_title }}</div>
+              <div class="ann-title">{{ ann.title }}</div>
+              <div class="ann-msg">{{ ann.message }}</div>
+              <div class="ann-time">{{ ann.created_at | date:'shortDate' }}</div>
+            </div>
+            <div ng-if="announcements.length === 0" style="padding: 24px 22px; color: #5a6b8a; font-size: 13px;">
+              No announcements
+            </div>
+          </div>
+        </div>
+
+        <!-- UPCOMING DEADLINES -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Upcoming Deadlines</div>
+            <div class="panel-link" ng-click="$location.path('/student/assignments')">View all →</div>
+          </div>
+          <div class="panel-body">
+            <div class="deadline-item" ng-repeat="d in deadlines | limitTo: 3">
+              <div class="deadline-dot {{ d.urgency }}"></div>
+              <div>
+                <div class="deadline-name">{{ d.title }}</div>
+                <div class="deadline-course">{{ d.course }}</div>
+              </div>
+              <div class="deadline-time {{ d.urgency }}">{{ d.due }}</div>
+            </div>
+            <div ng-if="deadlines.length === 0" style="padding: 24px 22px; color: #5a6b8a; font-size: 13px;">
+              No upcoming deadlines
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBMISSIONS TABLE -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Submission History</div>
+          <div>
+            <select ng-model="statusFilter" style="background: #1a2235; border: 1px solid rgba(255,255,255,0.1); color: #8896b3; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-family: 'Sora', sans-serif; cursor: pointer;">
+              <option value="">All Status</option>
+              <option value="Graded">Graded</option>
+              <option value="Submitted">Submitted</option>
+              <option value="Under Review">Under Review</option>
+              <option value="Resubmit">Resubmit</option>
+            </select>
+          </div>
+        </div>
+        <table class="sub-table">
+          <thead>
+            <tr>
+              <th>Assignment</th>
+              <th>Course</th>
+              <th>Submitted</th>
+              <th>Status</th>
+              <th>Marks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="s in submissions | filter:{status: statusFilter}">
+              <td style="font-weight: 500;">{{ s.title }}</td>
+              <td style="color: #8896b3;">{{ s.course }}</td>
+              <td style="color: #5a6b8a; font-family: 'DM Mono', monospace; font-size: 12px;">{{ s.date }}</td>
+              <td>
+                <span class="status-pill" ng-class="{graded: s.status==='Graded', submitted: s.status==='Submitted', review: s.status==='Under Review', resubmit: s.status==='Resubmit'}">
+                  {{ s.status }}
+                </span>
+              </td>
+              <td style="font-family: 'DM Mono', monospace; font-size: 13px; color: #34d98e;" ng-if="s.marks">{{ s.marks }}</td>
+              <td style="color: #5a6b8a;" ng-if="!s.marks">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EduTrack - Learning Management System
 
 A complete, fully functional Learning Management System (LMS) built with Django (backend) and AngularJS (frontend). Features JWT authentication, course management, assignments, grading, and announcements.
@@ -822,3 +823,6 @@ This project is created for educational purposes.
 **Status**: ✅ **PRODUCTION READY**
 
 The system is fully functional and ready for demonstration, testing, and deployment.
+=======
+# Studytrack
+>>>>>>> 0ca80be18d683c3d052ca9b1fc239a141a7cfd35
